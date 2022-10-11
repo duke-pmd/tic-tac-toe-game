@@ -75,13 +75,10 @@ function Game() {
     setMove(0);
   };
 
-  // Next player does not change when undo move
   const handleUndoMove = (index, historyItem) => {
     setSquares(history[index]);
     setXIsNext(index % 2 === 0 ? true : false);
     setMove(index);
-    // history.length = index + 1;
-    // setHistory(history);
   };
 
   return (
