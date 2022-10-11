@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Board from "./Board";
+import History from "./History";
 
 function Game() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [winner, setWinner] = useState(null);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [move, setMove] = useState(0);
 
   //Declaring a Winner
   useEffect(() => {
-    "Your code here";
+    setWinner(calculateWinner(squares));
   }, [squares]);
 
   //function to check if a player has won.
@@ -40,22 +43,66 @@ function Game() {
 
   //Handle player
   const handleClick = (i) => {
-    "Your code here";
+    if (winner) return;
+    if (!squares[i]) {
+      setMove(move + 1);
+      history.length = move + 1;
+      setHistory(history);
+      const newSquares = squares.map((square, index) => {
+        if (index === i) {
+          return xIsNext ? "X" : "O";
+        }
+        return square;
+      });
+
+      // re-render board with new move
+      setSquares(newSquares);
+      // save board to history
+      setHistory((history) => {
+        return [...history, newSquares];
+      });
+      // set next player
+      setXIsNext(!xIsNext);
+    }
   };
 
   //Restart game
-  const handlRestart = () => {
-    "Your code here";
+  const handleRestart = () => {
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
+    setWinner(null);
+    setHistory([Array(9).fill(null)]);
+    setMove(0);
+  };
+
+  // Next player does not change when undo move
+  const handleUndoMove = (index, historyItem) => {
+    setSquares(history[index]);
+    setXIsNext(index % 2 === 0 ? true : false);
+    setMove(index);
+    // history.length = index + 1;
+    // setHistory(history);
   };
 
   return (
     <div className="main">
       <h2 className="result">Winner is: {winner ? winner : "N/N"}</h2>
-      <div className="game">
+      <div className="game-container">
         <span className="player">Next player is: {xIsNext ? "X" : "O"}</span>
-        <Board squares={"Your code here"} handleClick={"Your code here"} />
+        <div className="game-history-container">
+          <div className="game">
+            <Board squares={squares} handleClick={handleClick} />
+          </div>
+          <div className="history-container">
+            <History
+              history={history}
+              handleRestart={handleRestart}
+              handleUndoMove={handleUndoMove}
+            />
+          </div>
+        </div>
       </div>
-      <button onClick={"Your code here"} className="restart-btn">
+      <button onClick={handleRestart} className="restart-btn">
         Restart
       </button>
     </div>

@@ -1,9 +1,14 @@
 import React from "react";
 
-function Square({"Your code here"}) {
+function Square({ i, value, handleClick }) {
   return (
-    <button className={"square"} onClick={"Your code here"}>
-      "Your code here"
+    <button
+      className={"square"}
+      onClick={() => {
+        handleClick(i);
+      }}
+    >
+      {value}
     </button>
   );
 }
